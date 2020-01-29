@@ -1,6 +1,7 @@
 package com.bori.borinews.retrofit
 
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 //private  val  LOCAL:/*@@zvczos@@*/kotlin.String? = "http://192.168.0.2:8000/bori"
 //val  HEAD_NEWS_URL:/*@@zvczos@@*/kotlin.String? = LOCAL + "/head"
@@ -9,5 +10,6 @@ import retrofit2.http.GET
 interface RcmdNewsService
 {
    @GET("/rcmd")
-   fun getRcmdNews()
+   fun getRcmdNews(@Query("id") id: String)
+
 }
