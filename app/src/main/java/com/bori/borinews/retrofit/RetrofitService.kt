@@ -1,5 +1,8 @@
 package com.bori.borinews.retrofit
 
+import com.bori.borinews.news.HeadNewsModel
+import com.bori.borinews.news.RcmdNewsModel
+import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -7,9 +10,12 @@ import retrofit2.http.Query
 //val  HEAD_NEWS_URL:/*@@zvczos@@*/kotlin.String? = LOCAL + "/head"
 //val  RCMD_NEWS_URL:/*@@zvczos@@*/kotlin.String? = LOCAL + "/rcmd"
 
-interface RcmdNewsService
+interface RetrofitService
 {
    @GET("/rcmd")
-   fun getRcmdNews(@Query("id") id: String)
+   fun getRcmdNews(@Query("id") id: String): Call<RcmdNewsModel>
+
+   @GET("bori/head")
+   fun getHeadNews(): Call<HeadNewsModel>
 
 }
