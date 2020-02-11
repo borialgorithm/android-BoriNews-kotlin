@@ -12,7 +12,7 @@ import retrofit2.http.Query
 
 interface RetrofitService
 {
-   @GET("/rcmd")
+   @GET("bori/rcmd")
    fun getRcmdNews(@Query("id") id: String): Call<RcmdNewsModel>
 
    @GET("bori/head")

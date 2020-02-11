@@ -6,7 +6,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bori.borinews.auth.SessionManager
 import com.bori.borinews.news.HeadNewsModel
+import com.bori.borinews.news.RcmdNewsModel
 import com.bori.borinews.retrofit.RetrofitService
 import com.bori.borinews.ui.recommend.RcmdNewsAdapter
 import com.bori.borinews.ui.recommend.RecommendNewsFragment
@@ -20,12 +22,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity()
 {
-    var server: RetrofitService? = null
-    val baseUrl: String = "http://9631b8fe.ngrok.io"
+    private var sessionManager: SessionManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
+
+        checkAuth()
+
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null)
         {
@@ -33,31 +37,13 @@ class MainActivity : AppCompatActivity()
                 .replace(R.id.container, RecommendNewsFragment.newInstance())
                 .commitNow()
         }
+    }
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        server = retrofit.create(RetrofitService::class.java)
-
-        server?.getHeadNews()?.enqueue(object :Callback<HeadNewsModel>
-        {
-            override fun onFailure(call: Call<HeadNewsModel>, t: Throwable)
-            {
-                Log.e("fail", "failllllll")
-            }
-
-            override fun onResponse(call: Call<HeadNewsModel>, response: Response<HeadNewsModel>)
-            {
-                Log.d("nice!!", "niceeeeee")
-            }
-
-        })
-
-
-
-
+    private fun checkAuth()
+    {
+        sessionManager = SessionManager.getInstance(this)
+        sessionManager?.twitterSettingInit()
+        sessionManager?.twitterLogin()
     }
 
 
