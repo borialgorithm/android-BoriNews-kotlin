@@ -106,6 +106,7 @@ class SessionManager private constructor(var context: Context)
                 {
                     if(result != null)
                     {
+                        val my = 10
                         Toast.makeText(context,"login", Toast.LENGTH_LONG )
 
                     }
@@ -113,6 +114,7 @@ class SessionManager private constructor(var context: Context)
 
                 override fun failure(exception: TwitterException?)
                 {
+                    val my2 = 10
 
                     Toast.makeText(context,"Fail to login", Toast.LENGTH_LONG )
 
