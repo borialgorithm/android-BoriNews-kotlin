@@ -1,34 +1,42 @@
 {
   "project_info": {
-    "project_number": "755509849583",
-    "firebase_url": "https://borinews-d7558.firebaseio.com",
-    "project_id": "borinews-d7558",
-    "storage_bucket": "borinews-d7558.appspot.com"
+    "project_number": "423365030498",
+    "firebase_url": "https://borinews-c9694.firebaseio.com",
+    "project_id": "borinews-c9694",
+    "storage_bucket": "borinews-c9694.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:755509849583:android:b7d378299e4b7e6ef0da1a",
+        "mobilesdk_app_id": "1:423365030498:android:7d5d678942edb0ebd3173b",
         "android_client_info": {
           "package_name": "com.bori.borinews"
         }
       },
       "oauth_client": [
         {
-          "client_id": "755509849583-lm6dt6ckm87a1cojsftg2qdm5re6v3vc.apps.googleusercontent.com",
+          "client_id": "423365030498-tcakcvbv7fd3h9b3v6r4gapsm31iv2b8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bori.borinews",
+            "certificate_hash": "86150b58baba9144c5417b35ccc1ae057fb77fc4"
+          }
+        },
+        {
+          "client_id": "423365030498-0aejjd00o4vt8mjsc46r7de32srfge2n.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA_d_ZYLVtwLGyfoOALqVeHeCHjJep29OE"
+          "current_key": "AIzaSyA89hE90mr4kXp2z1Uwzh60NoW_HouLW_4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "755509849583-lm6dt6ckm87a1cojsftg2qdm5re6v3vc.apps.googleusercontent.com",
+              "client_id": "423365030498-0aejjd00o4vt8mjsc46r7de32srfge2n.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

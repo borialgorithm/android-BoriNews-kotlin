@@ -136,9 +136,6 @@ class SessionManager private constructor(var context: Context)
         return preferences?.getBoolean(IS_LOGIN, false)
     }
 
-
-
-
 }
 
 

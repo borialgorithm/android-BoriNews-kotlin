@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity()
     {
         super.onCreate(savedInstanceState)
 
-        checkAuth()
+        //checkAuth()
 
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null)
