@@ -9,6 +9,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
@@ -19,24 +20,34 @@ import com.bori.borinews.R
 import com.bori.borinews.auth.SessionManager
 import com.bori.borinews.connection.ConnectionManager
 import com.bori.borinews.user.User
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.OAuthProvider
+import com.twitter.sdk.android.core.Callback
+import com.twitter.sdk.android.core.Result
+import com.twitter.sdk.android.core.TwitterException
+import com.twitter.sdk.android.core.TwitterSession
+import com.twitter.sdk.android.core.identity.TwitterLoginButton
 
 
 class LoginActivity : AppCompatActivity()
 {
+    private val TAG: String = "LoginActivity"
 
     private lateinit var loginViewModel: LoginViewModel
 
     private lateinit var context: Context
     private lateinit var user: User
     private var session: SessionManager? = null
-
+    private var auth: FirebaseAuth? = null
+    private var authListener: FirebaseAuth.AuthStateListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
 
         context = applicationContext
+        session = SessionManager.getInstance(this)
+        session?.twitterSettingInit()
 
         setContentView(R.layout.activity_login)
 
@@ -50,6 +61,50 @@ class LoginActivity : AppCompatActivity()
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
+
+        val twtLogin = findViewById<TwitterLoginButton>(R.id.twt_login_button)
+
+        twtLogin.setCallback(object: Callback<TwitterSession>()
+        {
+            override fun success(result: Result<TwitterSession>?)
+            {
+                Log.d(TAG, "success login")
+            }
+
+            override fun failure(exception: TwitterException?)
+            {
+                Log.d(TAG, "fail login")
+            }
+
+        })
+
+        auth = FirebaseAuth.getInstance()
+
+        authListener = FirebaseAuth.AuthStateListener(object: FirebaseAuth.AuthStateListener,
+            (FirebaseAuth) -> Unit{
+            override fun onAuthStateChanged(p0: FirebaseAuth)
+            {
+                var user = p0.getCurrentUser()
+                if (user != null)
+                {
+                    Log.d(TAG,"secion iniciada  con email : ${user.email}")
+                }
+                else
+                {
+                    Log.d(TAG, "secion cerrada 1 ")
+                }
+
+            }
+
+            override fun invoke(p1: FirebaseAuth)
+            {
+            }
+        })
+
+
+
+
+
 
         loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
             .get(LoginViewModel::class.java)

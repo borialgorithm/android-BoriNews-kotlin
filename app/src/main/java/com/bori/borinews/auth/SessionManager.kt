@@ -5,12 +5,14 @@ import android.content.ContentProviderClient
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.util.Log
 import android.widget.Toast
 import com.bori.borinews.R
 import com.bori.borinews.user.User
 import com.google.firebase.auth.FirebaseAuth
 import com.twitter.sdk.android.core.*
 import com.twitter.sdk.android.core.identity.TwitterAuthClient
+import kotlin.Unit
 
 class SessionManager private constructor(var context: Context)
 {
@@ -45,13 +47,40 @@ class SessionManager private constructor(var context: Context)
     private var preferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
     private lateinit var twitterAuthClient: TwitterAuthClient
-    private lateinit var auth: FirebaseAuth
+    private var auth: FirebaseAuth
+    private lateinit var authStateListener: FirebaseAuth.AuthStateListener
 
     init
     {
         preferences = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE)
         editor = preferences?.edit()
         auth = FirebaseAuth.getInstance()
+        authStateListener = FirebaseAuth.AuthStateListener(object : FirebaseAuth.AuthStateListener,
+                (FirebaseAuth) -> Unit
+        {
+            override fun onAuthStateChanged(p0: FirebaseAuth)
+            {
+                val user = p0.currentUser
+                if(user != null)
+                {
+                    Log.i("TWTSESSION", "Uset is valid")
+                }
+                else
+                {
+                    Log.i("TWTSESSION", "failed")
+
+                }
+
+            }
+
+            override fun invoke(p1: FirebaseAuth)
+            {
+
+            }
+        })
+
+        auth.addAuthStateListener(authStateListener)
+
 
     }
 
@@ -67,18 +96,6 @@ class SessionManager private constructor(var context: Context)
 
     }
 
-    fun checkLogin()
-    {
-        if(!isLoggedIn()!!)
-        {
-            startLoginActivity()
-
-        }
-    }
-
-    private fun startLoginActivity()
-    {
-    }
 
     fun twitterSettingInit()
     {
@@ -115,13 +132,13 @@ class SessionManager private constructor(var context: Context)
                 override fun failure(exception: TwitterException?)
                 {
                     val my2 = 10
-
                     Toast.makeText(context,"Fail to login", Toast.LENGTH_LONG )
 
                 }
             }
-
         )
+
+
     }
 
     fun twitterLogout()
@@ -131,12 +148,9 @@ class SessionManager private constructor(var context: Context)
 
     }
 
-    private fun isLoggedIn(): Boolean?
+    fun isLoggedIn(): Boolean?
     {
         return preferences?.getBoolean(IS_LOGIN, false)
     }
 
 }
-
-
-

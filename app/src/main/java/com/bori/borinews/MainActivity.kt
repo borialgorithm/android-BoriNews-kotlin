@@ -1,5 +1,6 @@
 package com.bori.borinews
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bori.borinews.auth.SessionManager
+import com.bori.borinews.auth.activity.ui.login.LoginActivity
 import com.bori.borinews.news.HeadNewsModel
 import com.bori.borinews.news.RcmdNewsModel
 import com.bori.borinews.retrofit.RetrofitService
@@ -28,6 +30,8 @@ class MainActivity : AppCompatActivity()
     {
         super.onCreate(savedInstanceState)
 
+        init()
+
         checkAuth()
 
         setContentView(R.layout.main_activity)
@@ -39,11 +43,24 @@ class MainActivity : AppCompatActivity()
         }
     }
 
-    private fun checkAuth()
+    private fun init()
     {
         sessionManager = SessionManager.getInstance(this)
-        sessionManager?.twitterSettingInit()
-        sessionManager?.twitterLogin()
+    }
+
+    private fun checkAuth()
+    {
+        if(!sessionManager?.isLoggedIn()!!)
+        {
+            startLoginActivity()
+        }
+    }
+
+    private fun startLoginActivity()
+    {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+
     }
 
 
