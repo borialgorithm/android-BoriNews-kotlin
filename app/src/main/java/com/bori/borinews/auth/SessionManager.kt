@@ -16,6 +16,8 @@ import kotlin.Unit
 
 class SessionManager private constructor(var context: Context)
 {
+    val TAG: String = "SessionManager"
+
     companion object
     {
         @Volatile private var INSTANCE: SessionManager? = null
@@ -47,41 +49,23 @@ class SessionManager private constructor(var context: Context)
     private var preferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
     private lateinit var twitterAuthClient: TwitterAuthClient
-    private var auth: FirebaseAuth
+    private lateinit var auth: FirebaseAuth
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
 
     init
     {
         preferences = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE)
         editor = preferences?.edit()
-        auth = FirebaseAuth.getInstance()
-        authStateListener = FirebaseAuth.AuthStateListener(object : FirebaseAuth.AuthStateListener,
-                (FirebaseAuth) -> Unit
-        {
-            override fun onAuthStateChanged(p0: FirebaseAuth)
-            {
-                val user = p0.currentUser
-                if(user != null)
-                {
-                    Log.i("TWTSESSION", "Uset is valid")
-                }
-                else
-                {
-                    Log.i("TWTSESSION", "failed")
+    }
 
-                }
-
-            }
-
-            override fun invoke(p1: FirebaseAuth)
-            {
-
-            }
-        })
-
+    fun addFirebaseListener()
+    {
         auth.addAuthStateListener(authStateListener)
+    }
 
-
+    fun removeFirebaseListener()
+    {
+        auth.removeAuthStateListener(authStateListener)
     }
 
     fun createLoginSession(user: User)
@@ -97,6 +81,33 @@ class SessionManager private constructor(var context: Context)
     }
 
 
+    fun firebaseAuthInit()
+    {
+        auth = FirebaseAuth.getInstance()
+        authStateListener = FirebaseAuth.AuthStateListener(object : FirebaseAuth.AuthStateListener,
+                (FirebaseAuth) -> Unit
+        {
+            override fun onAuthStateChanged(p0: FirebaseAuth)
+            {
+                val user = p0.currentUser
+                if(user != null)
+                {
+                    Log.d(TAG, "User is valid")
+                }
+                else
+                {
+                    Log.d(TAG, "Fail to get User")
+                }
+            }
+
+            override fun invoke(p1: FirebaseAuth)
+            {
+
+            }
+        })
+
+
+    }
     fun twitterSettingInit()
     {
        val authConfig = TwitterAuthConfig(
@@ -106,7 +117,9 @@ class SessionManager private constructor(var context: Context)
 
         val twitterConfig = TwitterConfig.Builder(context)
             .twitterAuthConfig(authConfig)
+            .debug(true)
             .build()
+
         Twitter.initialize(twitterConfig)
 
         twitterAuthClient = TwitterAuthClient()
@@ -123,22 +136,19 @@ class SessionManager private constructor(var context: Context)
                 {
                     if(result != null)
                     {
-                        val my = 10
-                        Toast.makeText(context,"login", Toast.LENGTH_LONG )
+                        Toast.makeText(context,"login", Toast.LENGTH_LONG ).show()
 
                     }
                 }
 
                 override fun failure(exception: TwitterException?)
                 {
-                    val my2 = 10
-                    Toast.makeText(context,"Fail to login", Toast.LENGTH_LONG )
+                    Toast.makeText(context,"Faill to login", Toast.LENGTH_LONG ).show()
+                    Log.d(TAG, exception.toString())
 
                 }
             }
         )
-
-
     }
 
     fun twitterLogout()

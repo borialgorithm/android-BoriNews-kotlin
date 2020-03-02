@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.ActionMode
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
@@ -38,8 +39,6 @@ class LoginActivity : AppCompatActivity()
     private lateinit var context: Context
     private lateinit var user: User
     private var session: SessionManager? = null
-    private var auth: FirebaseAuth? = null
-    private var authListener: FirebaseAuth.AuthStateListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -51,16 +50,19 @@ class LoginActivity : AppCompatActivity()
 
         setContentView(R.layout.activity_login)
 
+        session?.firebaseAuthInit()
+
         setUser()
-
-
         ConnectionManager.connectionCheck(this)
-
 
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
+
+        login.setOnClickListener {
+            session?.twitterLogin()
+        }
 
         val twtLogin = findViewById<TwitterLoginButton>(R.id.twt_login_button)
 
@@ -69,42 +71,18 @@ class LoginActivity : AppCompatActivity()
             override fun success(result: Result<TwitterSession>?)
             {
                 Log.d(TAG, "success login")
+                Toast.makeText(applicationContext, "success to login", Toast.LENGTH_LONG)
+                    .show()
+
             }
 
             override fun failure(exception: TwitterException?)
             {
-                Log.d(TAG, "fail login")
-            }
-
-        })
-
-        auth = FirebaseAuth.getInstance()
-
-        authListener = FirebaseAuth.AuthStateListener(object: FirebaseAuth.AuthStateListener,
-            (FirebaseAuth) -> Unit{
-            override fun onAuthStateChanged(p0: FirebaseAuth)
-            {
-                var user = p0.getCurrentUser()
-                if (user != null)
-                {
-                    Log.d(TAG,"secion iniciada  con email : ${user.email}")
-                }
-                else
-                {
-                    Log.d(TAG, "secion cerrada 1 ")
-                }
-
-            }
-
-            override fun invoke(p1: FirebaseAuth)
-            {
+                Toast.makeText(applicationContext, "fail to login", Toast.LENGTH_LONG).show()
+                Log.d(TAG, "fail to login")
+                Log.d(TAG, exception.toString() )
             }
         })
-
-
-
-
-
 
         loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
             .get(LoginViewModel::class.java)
@@ -170,10 +148,13 @@ class LoginActivity : AppCompatActivity()
                 false
             }
 
+            /*
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
                 loginViewModel.login(username.text.toString(), password.text.toString())
-            }
+
+
+            } */
         }
     }
 
@@ -199,6 +180,18 @@ class LoginActivity : AppCompatActivity()
     {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
+
+    override fun onStart()
+    {
+        super.onStart()
+        session?.addFirebaseListener()
+    }
+
+    override fun onDestroy()
+    {
+        super.onDestroy()
+        session?.removeFirebaseListener()
+    }
 }
 
 /**
@@ -222,3 +215,4 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit)
         }
     })
 }
+
